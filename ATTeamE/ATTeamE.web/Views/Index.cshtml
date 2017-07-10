@@ -1,0 +1,47 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<button class="btn btn-success" id="button">Start Recording</button>
+<button class="btn btn-danger" id="stop">Stop Recording</button>
+
+@section scripts {
+    <script>
+
+        document.querySelector('#button').onclick = function () {
+
+            fetch('/api/speech-to-text/token')
+                .then(function (response) {
+                    return response.text();
+                }).then(function (token) {
+
+                    var stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
+                        token: "LGnIMyTjVbiGDfl9pD1iplsNQkZZ2vf2Q7Y5GnX9MAUsxuPZXSwI3InqJVGC9DiSitbvgIK9MGcejiqpIv1Vdcy % 2BKFh8CKiTvEnLo61KqKGfVY4zVF5r0Sj0jinebqhDc6ugKIE4O%2BDSHkxNd79E6X8hLzlIgk5vkOKbAcLPgZ9%2BgeCbc0LXwRDsiXWaoQfd8oWaYp7iP3BRqRQ9shM2aGJIEMsEtIv5mHMGGbu8UDs4okpSAdPRUSeY7YE7q3GclfHb3yyEvQyu5F4ZZQVjVvy3w6Iv2joQ9HMfNprxX2jDqz1HF2hiHNn%2BRmmRY6ZdxP%2FgFovkDY6iFEgyPsg7azLLnSefXaBYI5XE7f7Uh6Lx6PfCNHw1ZoDCznkKnOAsi%2FgP%2F%2F1F6%2FVDwyCe2%2FuQKslMoPw%2Fl6DCT3v8XTdIxI1ee26roc1nG7cOz2IFeufPK7Ygl1y48HDK8752b4DN54IxaTNAbV2gTfuaaz9bRd2fOc5Cv6vzl%2Brjso7IzQ2PK0K35yTrRlwvSdvwd5MjoS%2Bgip%2BWDfes05ZHGULNa6TpohdlJ4eaC9IguDjBf1fH79VL%2F3%2B6%2FK%2BE5T%2BfdNQNr9Gtneq5xnRulAfVZ0Gs0KG98rE2CXQrtmp5rP3j4IGQ0uHke4uFZvSWROLRgruAs91UojTI7A%2BSDx5Mt57OFwsYLfkGfIhOqs9NcIS9AoOOcH0Zq1Tc4K5%2Fxtv9PmyUpj%2BFEepI34VdQ5RAmx7t7jJ3fhiQTBXSU7eyOVOz7p9vIROLWi1JA%2BBiaLV%2BzgnAhgg63zfxBKtOFeQTYkdZnbUJhuab9XwU9qcELp03mnxIsv4QkmSihTox2CdQw5kNOkwkNyE5UMOYCkAYTP%2BnlSAchFuQBhIktTBuYUcU06xtZ4tP7yTdkj8wvZlXBzjXq5Gx6cQ0RGQ9aYj7nfJtBn235TBEumoT7ySONsmgQKBk",
+                        object_mode: false // default
+                    });
+
+                    stream.setEncoding('utf8'); // get text instead of Buffers for on data events
+
+                    stream.on('data', function (data) {
+                        console.log(data);
+                    });
+
+                    stream.on('error', function (err) {
+                        console.log(err);
+                    });
+
+                    document.querySelector('#stop').onclick = stream.stop.bind(stream);
+
+                }).catch(function (error) {
+                    console.log(error);
+                });
+        };
+
+</script>
+
+<script src="~/Scripts/watson-speech.js"></script>
+<script src="~/Scripts/fetch.js"></script>
+
+}

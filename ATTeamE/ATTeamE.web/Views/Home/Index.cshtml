@@ -1,0 +1,61 @@
+﻿
+<section ng-app="FindMyFlix" class="b1">
+    <div class="in1">
+        <div class="content">
+            <h1 class="item animated bounceInUp">Welcome to </br> Find My Flix</h1>
+            <h2 class="item-two animated bounceInUp">Say it. Watch it.</h2>
+            <a class="btn" href="#">Start talking to Watson</a>
+            <div id="img">
+                <img src="http://corp.bandsintown.com/assets/icon-misc-mic.png">
+            </div>
+
+            <button class="btn btn-success" id="button">Start Recording</button>
+            <button class="btn btn-danger" id="stop">Stop Recording</button>
+
+        </div>
+    </div>
+</section>
+
+@section scripts{
+
+    <script>
+        (function () {
+            "use strict";
+            angular.module("FindMyFlix", []);
+            angular.module("FindMyFlix").controller("controller", controller);
+            controller.$inject = ["$scope", "$http"];
+            function controller($scope, $http) {
+                var vm = this;
+                vm.stopRecording = _stopRecording;
+                vm.getMic = _getMic;
+
+                function _stopRecording() {
+                    vm.stream.stop.bind(vm.stream);
+                }
+
+                function _getMic() {
+                    $http({
+                        url: "api/token/SpeechToText",
+                        method: "GET"
+                    }).then(function (token) {
+                        vm.stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
+                            token: token,
+                            object_mode: false // default
+                        });
+                        vm.stream.setEncoding('utf8'); // get text instead of Buffers for on data events
+                        vm.stream.on('data', function (data) {
+                            console.log(data);
+                        });
+                        vm.stream.on('error', function (err) {
+                            console.log(err);
+                        });
+                    }).catch(function (error) {
+                        console.log(error);
+                    });;
+                }
+            }
+        })();
+    </script>
+
+}
+
